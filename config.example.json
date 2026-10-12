@@ -1,0 +1,8 @@
+{
+  "vps_ip": "YOUR_VPS_IP",
+  "vps_port": 443,
+  "ssh_port": 22,
+  "panel_local_port": 5541,
+  "panel_path": "/your-secret-path/",
+  "active_donor": "speedtest.serverius.net"
+}

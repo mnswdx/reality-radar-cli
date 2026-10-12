@@ -1,0 +1,36 @@
+# Приватные конфигурации с реальными IP и секретными путями
+config.local.json
+.env
+*.env
+
+# Личные документы и резюме
+*.pdf
+resume.html
+*resume*
+*Resume*
+*резюме*
+*Резюме*
+
+# Кэш Python и байткод
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Виртуальные окружения
+env/
+venv/
+.venv/
+ENV/
+
+# Настройки IDE и редакторов
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Временные файлы и логи
+*.log
+scratch/
+.system_generated/
