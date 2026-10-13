@@ -1,5 +1,5 @@
 """
-Главный диспетчер командной строки (CLI) Reality Radar & Sentinel v1.1.0.
+Главный диспетчер командной строки (CLI) Reality Radar & Sentinel v1.2.0.
 Обрабатывает аргументы, запускает региональное сканирование, аудит VPS и интерактивное меню.
 """
 
@@ -216,7 +216,7 @@ def main():
     config = RadarConfig()
 
     parser = argparse.ArgumentParser(
-        description="Reality Radar & Sentinel CLI v1.1.0 — инструмент аудита VLESS-REALITY и VPS",
+        description="Reality Radar & Sentinel CLI v1.2.0 — инструмент аудита VLESS-REALITY и VPS",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     subparsers = parser.add_subparsers(dest="command", help="Команда для выполнения")

@@ -1,6 +1,6 @@
 # 🛰️ Reality Radar & Sentinel CLI
 
-[![Release: v1.1.0](https://img.shields.io/badge/Release-v1.1.0-brightgreen.svg)](https://github.com/mnswdx/reality-radar-cli/releases)
+[![Release: v1.2.0](https://img.shields.io/badge/Release-v1.2.0-brightgreen.svg)](https://github.com/mnswdx/reality-radar-cli/releases)
 [![License: Unlicense](https://img.shields.io/badge/License-Unlicense-blue.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-yellow.svg)]()
 [![Platform: Windows | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-orange.svg)]()
