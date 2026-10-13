@@ -23,6 +23,7 @@ from radar.ui import (
     render_sentinel_report,
     render_ascii_qr
 )
+from radar.routing import handle_routing_menu
 
 def load_domains_from_file(file_path: str) -> List[str]:
     """Загружает список доменов из текстового файла (по одному на строку)"""
@@ -170,9 +171,10 @@ def interactive_menu(config: RadarConfig):
         console.print("  [bold cyan]5.[/] Диагностика здоровья VPS и порта 443 (Sentinel Watchdog)")
         console.print("  [bold cyan]6.[/] Поднять туннель к 3x-ui и открыть админку в браузере")
         console.print("  [bold cyan]7.[/] Сгенерировать терминальный QR-код для ссылки VLESS")
+        console.print("  [bold cyan]8.[/] ⚡ Умная маршрутизация Happ (SplitStream Turbo) — ссылка, буфер, запуск")
         console.print("  [bold red]0.[/] Выход\n")
 
-        choice = Prompt.ask("[bold yellow]Ваш выбор[/]", choices=["0", "1", "2", "3", "4", "5", "6", "7"], default="1")
+        choice = Prompt.ask("[bold yellow]Ваш выбор[/]", choices=["0", "1", "2", "3", "4", "5", "6", "7", "8"], default="1")
 
         if choice == "1":
             handle_scan(config, region="all")
@@ -200,6 +202,8 @@ def interactive_menu(config: RadarConfig):
             link = Prompt.ask("[bold cyan]Вставьте ссылку vless://...[/]")
             if link.strip():
                 handle_qr(link.strip())
+        elif choice == "8":
+            handle_routing_menu()
         elif choice == "0":
             console.print("[green]До встречи! Ваша крепость под защитой.[/]")
             break
@@ -239,6 +243,9 @@ def main():
     p_qr = subparsers.add_parser("qr", help="Отрисовать ASCII QR-код для VLESS ссылки")
     p_qr.add_argument("data", help="VLESS ссылка для генерации QR-кода")
 
+    # Команда route
+    subparsers.add_parser("route", help="Сгенерировать профиль умной маршрутизации SplitStream Turbo для Happ")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -255,6 +262,8 @@ def main():
             handle_tunnel(args.action, config)
         elif args.command == "qr":
             handle_qr(args.data)
+        elif args.command == "route":
+            handle_routing_menu()
 
 if __name__ == "__main__":
     main()

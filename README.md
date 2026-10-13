@@ -85,6 +85,7 @@ python reality_radar.py
 | `python reality_radar.py tunnel status` | Проверить, активен ли туннель к порту 5541 |
 | `python reality_radar.py tunnel stop` | Остановить фоновый процесс туннеля |
 | `python reality_radar.py qr "vless://..."` | Отрисовать ASCII QR-код для ключа подключения |
+| `python reality_radar.py route` | Сгенерировать ссылку умной маршрутизации SplitStream Turbo для Happ |
 
 ---
 
