@@ -3,5 +3,5 @@
 Инструмент для поиска доноров REALITY, аудита Xray и управления SSH-туннелями.
 """
 
-__version__ = "1.0.0"
-__author__ = "Lead SecOps Engineer & Egor"
+__version__ = "1.1.0"
+__author__ = "mnswdx"

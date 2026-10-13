@@ -22,7 +22,7 @@ console = Console(legacy_windows=False, force_terminal=True)
 
 BANNER_ART = """
 [bold cyan]=======================================================[/]
-[bold cyan]      REALITY RADAR & VPS SENTINEL  v1.0.0[/]
+[bold cyan]      REALITY RADAR & VPS SENTINEL  v1.1.0[/]
 [bold yellow]   Аудит VLESS-REALITY · Валидация TLS 1.3 · Защита от ТСПУ[/]
 [bold cyan]=======================================================[/]
 """

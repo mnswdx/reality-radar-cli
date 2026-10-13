@@ -1,15 +1,17 @@
 """
-Главный диспетчер командной строки (CLI) Reality Radar & Sentinel.
-Обрабатывает аргументы, запускает сканирование, аудит VPS и интерактивное меню.
+Главный диспетчер командной строки (CLI) Reality Radar & Sentinel v1.1.0.
+Обрабатывает аргументы, запускает региональное сканирование, аудит VPS и интерактивное меню.
 """
 
 import sys
+import os
 import argparse
 import time
+from typing import List, Optional
 from rich.prompt import Prompt
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
 
-from radar.config import RadarConfig, CURATED_CANDIDATES
+from radar.config import RadarConfig, REGIONAL_CANDIDATES, get_candidates_by_region
 from radar.scanner import RealityScanner
 from radar.sentinel import VpsSentinel
 from radar.tunnel import TunnelManager
@@ -22,12 +24,49 @@ from radar.ui import (
     render_ascii_qr
 )
 
-def handle_scan(config: RadarConfig, custom_domains: list = None):
+def load_domains_from_file(file_path: str) -> List[str]:
+    """Загружает список доменов из текстового файла (по одному на строку)"""
+    if not os.path.exists(file_path):
+        console.print(f"[bold red]Ошибка:[/] Файл '{file_path}' не найден.")
+        return []
+    
+    domains = []
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            clean = line.strip()
+            # Пропускаем комментарии и пустые строки
+            if clean and not clean.startswith("#"):
+                # Убираем протокол https:// если пользователь вставил полный URL
+                clean = clean.replace("https://", "").replace("http://", "").split("/")[0]
+                domains.append(clean)
+    
+    # Удаляем дубликаты
+    return list(dict.fromkeys(domains))
+
+def handle_scan(config: RadarConfig, region: str = "all", custom_domains: list = None, from_file: str = None):
     """Выполняет сканирование пула доноров с живым индикатором прогресса"""
-    domains = custom_domains if custom_domains else config.candidates
+    if custom_domains:
+        domains = custom_domains
+        region_title = "пользовательского списка"
+    elif from_file:
+        domains = load_domains_from_file(from_file)
+        if not domains:
+            return
+        region_title = f"файла {from_file}"
+    else:
+        domains = get_candidates_by_region(region)
+        region_names = {
+            "all": "всей Европы (Нидерланды, Финляндия, Литва, зеркала Linux)",
+            "nl": "Нидерландов 🇳🇱",
+            "fi": "Финляндии 🇫🇮",
+            "lt": "Литвы 🇱🇹",
+            "eu": "общеевропейских зеркал ПО 🇪🇺"
+        }
+        region_title = region_names.get(region.lower(), region.upper())
+
     scanner = RealityScanner(timeout=config.timeout, max_workers=config.threads)
 
-    console.print(f"[bold cyan]Запуск сканирования {len(domains)} европейских узлов-кандидатов...[/]")
+    console.print(f"[bold cyan]Запуск сканирования {len(domains)} узлов ({region_title})...[/]")
     console.print("[dim]Критерии: TLS 1.3 · HTTP/2 (ALPN) · Отсутствие CDN · Минимальный RTT[/]\n")
 
     results = []
@@ -124,29 +163,40 @@ def interactive_menu(config: RadarConfig):
     while True:
         print_banner()
         console.print("[bold white]Выберите действие:[/]")
-        console.print("  [bold cyan]1.[/] Сканировать европейских доноров REALITY (SNI Radar)")
-        console.print("  [bold cyan]2.[/] Проверить конкретный домен на пригодность (Deep Check)")
-        console.print("  [bold cyan]3.[/] Диагностика здоровья VPS и порта 443 (Sentinel Watchdog)")
-        console.print("  [bold cyan]4.[/] Поднять туннель к 3x-ui и открыть админку в браузере")
-        console.print("  [bold cyan]5.[/] Остановить SSH-туннель")
-        console.print("  [bold cyan]6.[/] Сгенерировать терминальный QR-код для ссылки VLESS")
+        console.print("  [bold cyan]1.[/] Сканировать всех доноров Европы (NL + FI + LT + EU)")
+        console.print("  [bold cyan]2.[/] Сканировать по странам: 🇳🇱 Нидерланды / 🇫🇮 Финляндия / 🇱🇹 Литва")
+        console.print("  [bold cyan]3.[/] Сканировать список доменов из текстового файла")
+        console.print("  [bold cyan]4.[/] Проверить конкретный сайт на пригодность (Deep Check)")
+        console.print("  [bold cyan]5.[/] Диагностика здоровья VPS и порта 443 (Sentinel Watchdog)")
+        console.print("  [bold cyan]6.[/] Поднять туннель к 3x-ui и открыть админку в браузере")
+        console.print("  [bold cyan]7.[/] Сгенерировать терминальный QR-код для ссылки VLESS")
         console.print("  [bold red]0.[/] Выход\n")
 
-        choice = Prompt.ask("[bold yellow]Ваш выбор[/]", choices=["0", "1", "2", "3", "4", "5", "6"], default="3")
+        choice = Prompt.ask("[bold yellow]Ваш выбор[/]", choices=["0", "1", "2", "3", "4", "5", "6", "7"], default="1")
 
         if choice == "1":
-            handle_scan(config)
+            handle_scan(config, region="all")
         elif choice == "2":
-            target = Prompt.ask("[bold cyan]Введите имя домена (например, speedtest.serverius.net)[/]")
+            console.print("\n[bold white]Выберите регион:[/]")
+            console.print("  [bold cyan]nl[/] — 🇳🇱 Нидерланды (Амстердам, Serverius, Leaseweb, AMS-IX)")
+            console.print("  [bold cyan]fi[/] — 🇫🇮 Финляндия (Хельсинки, CSC, Aalto, FICIX, Yle)")
+            console.print("  [bold cyan]lt[/] — 🇱🇹 Литва (Вильнюс, Litnet, VU, KTU, LRT)")
+            console.print("  [bold cyan]eu[/] — 🇪🇺 Общеевропейские нейтральные зеркала ПО (Debian, Arch, Kernel)")
+            reg = Prompt.ask("[bold yellow]Регион[/]", choices=["nl", "fi", "lt", "eu"], default="fi")
+            handle_scan(config, region=reg)
+        elif choice == "3":
+            f_path = Prompt.ask("[bold cyan]Укажите путь к текстовому файлу (например, domains.txt)[/]")
+            if f_path.strip():
+                handle_scan(config, from_file=f_path.strip())
+        elif choice == "4":
+            target = Prompt.ask("[bold cyan]Введите имя домена (например, csc.fi или vu.lt)[/]")
             if target.strip():
                 handle_check(target.strip(), config)
-        elif choice == "3":
-            handle_vps_status(config)
-        elif choice == "4":
-            handle_tunnel("start", config)
         elif choice == "5":
-            handle_tunnel("stop", config)
+            handle_vps_status(config)
         elif choice == "6":
+            handle_tunnel("start", config)
+        elif choice == "7":
             link = Prompt.ask("[bold cyan]Вставьте ссылку vless://...[/]")
             if link.strip():
                 handle_qr(link.strip())
@@ -162,18 +212,21 @@ def main():
     config = RadarConfig()
 
     parser = argparse.ArgumentParser(
-        description="Reality Radar & Sentinel CLI — инструмент аудита VLESS-REALITY и VPS",
+        description="Reality Radar & Sentinel CLI v1.1.0 — инструмент аудита VLESS-REALITY и VPS",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     subparsers = parser.add_subparsers(dest="command", help="Команда для выполнения")
 
     # Команда scan
-    p_scan = subparsers.add_parser("scan", help="Сканировать список европейских доноров")
-    p_scan.add_argument("--domain", "-d", nargs="+", help="Пользовательский список доменов")
+    p_scan = subparsers.add_parser("scan", help="Сканировать список доноров")
+    p_scan.add_argument("--region", "-r", choices=["nl", "fi", "lt", "eu", "all"], default="all",
+                        help="Региональный фильтр (по умолчанию: all)")
+    p_scan.add_argument("--file", "-f", help="Путь к текстовому файлу со списком доменов")
+    p_scan.add_argument("--domain", "-d", nargs="+", help="Пользовательский список доменов через пробел")
 
     # Команда check
     p_check = subparsers.add_parser("check", help="Глубокая проверка одного домена")
-    p_check.add_argument("target", help="Домен для проверки (например: speedtest.serverius.net)")
+    p_check.add_argument("target", help="Домен для проверки (например: csc.fi или speedtest.serverius.net)")
 
     # Команда vps
     subparsers.add_parser("vps", help="Аудит здоровья и доступности сервера VPS")
@@ -189,12 +242,11 @@ def main():
     args = parser.parse_args()
 
     if not args.command:
-        # Если аргументы не переданы — открываем красивое интерактивное меню
         interactive_menu(config)
     else:
         print_banner()
         if args.command == "scan":
-            handle_scan(config, custom_domains=args.domain)
+            handle_scan(config, region=args.region, custom_domains=args.domain, from_file=args.file)
         elif args.command == "check":
             handle_check(args.target, config)
         elif args.command == "vps":

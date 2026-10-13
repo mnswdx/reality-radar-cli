@@ -68,8 +68,12 @@ python reality_radar.py
 
 | Команда | Описание |
 | :--- | :--- |
-| `python reality_radar.py scan` | Запустить многопоточное сканирование базы европейских доноров |
-| `python reality_radar.py check <домен>` | Провести глубокий тест одного целевого сайта (например: `speedtest.serverius.net`) |
+| `python reality_radar.py scan` | Сканирование всех европейских доноров (NL + FI + LT + EU) |
+| `python reality_radar.py scan --region fi` | Сканирование узлов Финляндии 🇫🇮 (Helsinki, CSC, FICIX, Yle) |
+| `python reality_radar.py scan --region lt` | Сканирование узлов Литвы 🇱🇹 (Litnet, VU, KTU, LRT) |
+| `python reality_radar.py scan --region nl` | Сканирование узлов Нидерландов 🇳🇱 (Serverius, Leaseweb, AMS-IX) |
+| `python reality_radar.py scan --file domains.txt` | Сканирование собственного списка сайтов из текстового файла |
+| `python reality_radar.py check <домен>` | Провести глубокий тест одного сайта (например: `csc.fi` или `vu.lt`) |
 | `python reality_radar.py vps` | Запустить Sentinel-диагностику здоровья VPS и порта 443 |
 | `python reality_radar.py tunnel start` | Поднять фоновый SSH-туннель к 3x-ui и открыть админку в браузере |
 | `python reality_radar.py tunnel status` | Проверить, активен ли туннель к порту 5541 |
