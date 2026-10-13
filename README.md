@@ -1,5 +1,11 @@
 # 🛰️ Reality Radar & Sentinel CLI
 
+[![Release: v1.1.0](https://img.shields.io/badge/Release-v1.1.0-brightgreen.svg)](https://github.com/mnswdx/reality-radar-cli/releases)
+[![License: Unlicense](https://img.shields.io/badge/License-Unlicense-blue.svg)](LICENSE)
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10+-yellow.svg)]()
+[![Platform: Windows | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-orange.svg)]()
+[![Protocol: VLESS--REALITY](https://img.shields.io/badge/Protocol-VLESS--REALITY-purple.svg)]()
+
 Профессиональный инструмент мониторинга, аудита безопасности и валидации доменов-доноров для **VLESS-REALITY (Xray / 3x-ui)**.
 
 Разработан для аудита безопасности, проверки маскировки и мониторинга любого VPS-сервера на базе VLESS-REALITY.
@@ -88,3 +94,9 @@ python reality_radar.py
 - **GOOD (65-84 балла):** Валидный TLS 1.3/ALPN, стабильный отклик, чистый узел.
 - **RISKY (30-64 балла):** Устаревший TLS 1.2 или нестабильный RTT. Повышенный риск внимания со стороны ТСПУ.
 - **UNUSABLE (0-29 баллов):** Обнаружен Cloudflare / Akamai CDN, либо порт 443 заблокирован. Использование приведёт к блокировке или ошибкам 403.
+
+---
+
+## 📄 Лицензия
+
+Распространяется свободно в общественном достоянии под лицензией [The Unlicense](LICENSE).
