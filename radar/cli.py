@@ -138,7 +138,7 @@ def handle_tunnel(action: str, config: RadarConfig):
 
     if action == "status":
         active = tm.is_tunnel_active()
-        status_text = "[bold green]АКТИВЕН (порт 5541 слушает)[/]" if active else "[yellow]ОТКЛЮЧЁН[/]"
+        status_text = f"[bold green]АКТИВЕН (порт {tm.panel_port} слушает)[/]" if active else "[yellow]ОТКЛЮЧЁН[/]"
         console.print(f"Статус SSH-туннеля: {status_text}")
         if active:
             console.print(f"Адрес панели: [cyan]{tm.get_panel_url()}[/]")

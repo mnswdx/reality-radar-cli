@@ -32,6 +32,7 @@ class SentinelReport:
     reality_handshake_ok: bool = False
     reality_tls_version: str = "Unknown"
     reality_cipher: str = ""
+    panel_port: int = DEFAULT_PANEL_LOCAL_PORT
     panel_http_status: int = 0
     ping_samples: List[float] = field(default_factory=list)
     ping_min: float = 0.0
@@ -138,7 +139,7 @@ class VpsSentinel:
 
     def run_full_diagnostic(self) -> SentinelReport:
         """Запускает полную комплексную диагностику всех узлов защиты"""
-        report = SentinelReport(vps_ip=self.vps_ip, active_donor=self.active_donor)
+        report = SentinelReport(vps_ip=self.vps_ip, active_donor=self.active_donor, panel_port=self.panel_port)
 
         # 1. Проверка порта 443 (VPN)
         vpn_ok, vpn_lat = self.check_tcp_port(self.vps_ip, self.vpn_port)

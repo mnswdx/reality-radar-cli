@@ -35,7 +35,7 @@ class TunnelManager:
         self.ssh_user = ssh_user
 
     def is_tunnel_active(self) -> bool:
-        """Проверяет, слушает ли локальный порт 5541 входящие соединения"""
+        """Проверяет, слушает ли настроенный локальный порт входящие соединения"""
         try:
             with socket.create_connection(("127.0.0.1", self.panel_port), timeout=1.0):
                 return True
@@ -49,11 +49,11 @@ class TunnelManager:
 
     def start_tunnel(self, open_browser: bool = True) -> Tuple[bool, str]:
         """
-        Запускает фоновый процесс SSH для проброса порта 5541:
-        ssh -N -L 5541:127.0.0.1:5541 root@<VPS_IP>
+        Запускает фоновый процесс SSH для проброса локального порта панели:
+        ssh -N -L <panel_port>:127.0.0.1:<panel_port> root@<VPS_IP>
         """
         if self.is_tunnel_active():
-            msg = "Туннель уже активен и слушает порт 5541."
+            msg = f"Туннель уже активен и слушает порт {self.panel_port}."
             if open_browser:
                 self.open_browser()
             return True, msg
@@ -88,13 +88,13 @@ class TunnelManager:
                         self.open_browser()
                     return True, f"Туннель успешно поднят! Панель доступна на {self.get_panel_url()}"
 
-            return False, "Процесс SSH запущен, но порт 5541 пока не отвечает. Проверьте пароль или ключ SSH."
+            return False, f"Процесс SSH запущен, но порт {self.panel_port} пока не отвечает. Проверьте пароль или ключ SSH."
 
         except Exception as e:
             return False, f"Ошибка при запуске SSH-туннеля: {str(e)}"
 
     def stop_tunnel(self) -> Tuple[bool, str]:
-        """Завершает фоновый процесс SSH, слушающий порт 5541"""
+        """Завершает фоновый процесс SSH, слушающий локальный порт панели"""
         if not self.is_tunnel_active():
             return True, "Туннель уже отключён."
 

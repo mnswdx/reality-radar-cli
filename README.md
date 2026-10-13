@@ -25,7 +25,7 @@
    - Проверка доступности портов `443` (VLESS-REALITY) и `22` (SSH / Fail2ban).
    - **Эмуляция активного зондирования:** отправка пакета `ClientHello` к ядру Xray с целевым SNI для подтверждения корректной работы подмены сертификата.
    - Замер сетевого джиттера (вариации задержки по 5 замерам).
-   - Проверка локального SSH-туннеля к веб-панели 3x-ui (`http://127.0.0.1:5541`).
+   - Проверка локального SSH-туннеля к веб-панели 3x-ui (по умолчанию `http://127.0.0.1:5541` или согласно `config.local.json`).
 
 3. **Smart Tunnel Manager:**
    - Подъём, проверка статуса и безопасная остановка SSH-туннеля к админке в один клик.
@@ -102,7 +102,7 @@ python reality_radar.py
 | `python reality_radar.py check <домен>` | Провести глубокий тест одного сайта (например: `csc.fi` или `vu.lt`) |
 | `python reality_radar.py vps` | Запустить Sentinel-диагностику здоровья VPS и порта 443 |
 | `python reality_radar.py tunnel start` | Поднять фоновый SSH-туннель к 3x-ui и открыть админку в браузере |
-| `python reality_radar.py tunnel status` | Проверить, активен ли туннель к порту 5541 |
+| `python reality_radar.py tunnel status` | Проверить статус локального SSH-туннеля к веб-панели |
 | `python reality_radar.py tunnel stop` | Остановить фоновый процесс туннеля |
 | `python reality_radar.py qr "vless://..."` | Отрисовать ASCII QR-код для ключа подключения |
 | `python reality_radar.py route` | Сгенерировать ссылку умной маршрутизации SplitStream Turbo для Happ |

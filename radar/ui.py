@@ -126,7 +126,7 @@ def render_sentinel_report(rep: SentinelReport):
     tun_text = (
         f"[bold green]АКТИВЕН[/] (Панель отвечает: HTTP {rep.panel_http_status})"
         if rep.port_panel_tunnel_open
-        else "[dim yellow]НЕ ПОДНЯТ[/] (Локальный порт 5541 свободен)"
+        else f"[dim yellow]НЕ ПОДНЯТ[/] (Локальный порт {rep.panel_port} свободен)"
     )
 
     handshake_text = (
@@ -140,7 +140,7 @@ def render_sentinel_report(rep: SentinelReport):
     table.add_row("Входящий порт 443 (VPN):", vpn_text)
     table.add_row("Входящий порт 22 (SSH):", ssh_text)
     table.add_row("Эмуляция REALITY Handshake:", handshake_text)
-    table.add_row("Локальный туннель 3x-ui (5541):", tun_text)
+    table.add_row(f"Локальный туннель 3x-ui ({rep.panel_port}):", tun_text)
     
     if rep.ping_avg > 0:
         table.add_row("Сетевой отклик (RTT):", f"Min {rep.ping_min}мс / Avg {rep.ping_avg}мс / Max {rep.ping_max}мс")
